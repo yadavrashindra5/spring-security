@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 //@EnableWebSecurity(debug = true)
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 //    @Bean
 //    public UserDetailsService userDetailsService() {
@@ -25,11 +27,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request -> {
-            request.requestMatchers("/api/route2").permitAll();
-//            request.requestMatchers("/api/route2").hasRole("USER");
-            request.anyRequest().authenticated();
+//        httpSecurity.authorizeHttpRequests(request -> {
+//            request.requestMatchers("/api/route2").permitAll();
+//            request.anyRequest().authenticated();
+//            request.anyRequest().permitAll();
+//        });
+
+        httpSecurity.authorizeHttpRequests(request->{
+           request.requestMatchers("/api/route3","/api/route4").hasRole("GUEST")
+                   .requestMatchers("/api/route1","/api/route2").hasRole("ADMIN").anyRequest().permitAll();
         });
+
         httpSecurity.formLogin(Customizer.withDefaults());
         httpSecurity.httpBasic(Customizer.withDefaults());
         return httpSecurity.build();

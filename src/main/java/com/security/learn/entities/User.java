@@ -1,15 +1,22 @@
 package com.security.learn.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "spring_security_users")
 public class User implements UserDetails {
@@ -18,7 +25,9 @@ public class User implements UserDetails {
     private String username;
     private String password;
 
-    String role="USER";
+    //roles
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<Role> role = new ArrayList<>();
 
     public String getUserId() {
         return userId;
@@ -38,7 +47,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        Set<SimpleGrantedAuthority> collect = role.stream().map(role1 -> new SimpleGrantedAuthority(role1.getName())).collect(Collectors.toSet());
+        return collect;
     }
 
     public String getPassword() {
@@ -47,13 +57,5 @@ public class User implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }
