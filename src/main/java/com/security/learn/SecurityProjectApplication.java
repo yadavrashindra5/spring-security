@@ -31,9 +31,9 @@ public class SecurityProjectApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        //ROLE_ADMIN
+//        ROLE_ADMIN
 
-        //ROLE_GUEST
+//        ROLE_GUEST
 
         Role role2 = roleRepository.findByName("ROLE_ADMIN").orElse(null);
         Role role1 = roleRepository.findByName("ROLE_GUEST").orElse(null);
